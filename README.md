@@ -24,3 +24,7 @@ Dönen cevap:
 Eğer sonuç bulunamazsa veya herhangi bir hata söz konusu olduğunda http status olarak 404 dönmekte ve dönen json da status false olmakta. Herşey başarılı ve sonuç yüklendi ise http status 200 dönmekte ve http status true olarak olmakta. API durum bilgilerini desc keyinden alabilirsiniz.
 ##### Swagger döküman linki:
 https://api.orhanaydogdu.com.tr/index.php?doc=isbn.yaml
+#
+
+##### Not:
+env.php dosyamızda şifrelerimiz ve veritabanı bağlantılarımız bulunduğu için git için geçersiz kıldım.
