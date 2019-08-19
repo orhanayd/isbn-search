@@ -129,7 +129,7 @@
                     $check_two = getHTMLByID("bookDiv", $replaced_result);
                     if($check_two){
                         $others = clearText2(getHTMLByID("hover-image-area", $check_two));
-                        if(count($others)<1){
+                        if(count($others)<1 || @(int)$others[2]===0){
                             $result['desc']="Lütfen daha sonra tekrar deneyiniz.";
                         }else{
                             $result['status']=true;
