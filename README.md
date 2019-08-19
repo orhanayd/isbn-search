@@ -2,7 +2,7 @@
 
 ###
 ##### Bu API get parametresi ile gönderilen isbn numarasının bilgilerini getirir.
-Örneğin: https://orhanaydogdu.com.tr/isbn/index.php?isbn=9786052983690
+Örneğin: https://api.orhanaydogdu.com.tr/isbn/index.php?isbn=9786052983690
 
 Dönen cevap:
 ```json
