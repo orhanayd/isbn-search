@@ -6,6 +6,40 @@
         $local=true;
     }
 
+    function is_valid_isbn($isbn_number){
+
+        $isbn_digits  = array_filter(preg_split('//', $isbn_number, -1, PREG_SPLIT_NO_EMPTY), '_is_numeric_or_x');
+        $isbn_length  = count($isbn_digits);
+        $isbn_sum     = 0;
+        
+        if((10 != $isbn_length) && (13 != $isbn_length)){ 
+            return false; 
+        }
+        
+        if(10 == $isbn_length){
+            foreach(range(1, 9) as $weight){
+                $isbn_sum += $weight * array_shift($isbn_digits); 
+            }
+            
+            return (10 == ($isbn_mod = ($isbn_sum % 11))) ? ('x' == mb_strtolower(array_shift($isbn_digits), 'UTF-8')) : ($isbn_mod == array_shift($isbn_digits));
+        }
+        
+        if(13 == $isbn_length){
+            foreach(array(1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3) as $weight){ 
+                $isbn_sum += $weight * array_shift($isbn_digits); 
+            }
+            
+            return (0 == ($isbn_mod = ($isbn_sum % 10))) ? (0 == array_shift($isbn_digits)) : ($isbn_mod == (10 - array_shift($isbn_digits)));
+        }
+        
+        return false;
+
+    }
+
+    function _is_numeric_or_x($val){ 
+        return ('x' == mb_strtolower($val, 'UTF-8')) ? true : is_numeric($val); 
+    }
+
     function getHTMLByID($id, $html) {
         $dom = new DOMDocument;
         libxml_use_internal_errors(true);
@@ -95,8 +129,15 @@
     }
 
     function isbnSearch($isbn){
+        if(strlen($isbn)===10){
+            $isbn="978".$isbn;
+        }
         $isbn=(int)$isbn;
         $result = array("status"=>false, "desc"=>"", "result"=>"");
+        if(!is_valid_isbn($isbn)){
+            $result['desc']="ISBN Doğru değil";
+            return $result;
+        }
         $dbResult=isbnGetFromDb($isbn); // db den isbn bilgilerini çekiyoruz.
         if($dbResult){ // db de isbn var mı kontrol
             /**
