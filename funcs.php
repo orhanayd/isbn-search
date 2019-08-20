@@ -5,6 +5,20 @@
     if($_SERVER['REMOTE_ADDR']==="127.0.0.1"){
         $local=true;
     }
+    $preLink = "https://api.orhanaydogdu.com.tr/isbn/";
+
+
+    function checkImage($isbn, $url){
+        global $preLink;
+        $imagePath="images/".$isbn.".jpg";
+        if(file_exists($imagePath)){
+            return $preLink.$imagePath;
+        }
+        if(copy($url, $imagePath)){
+            return $preLink.$imagePath;
+        }
+        return null;
+    }
 
     function is_valid_isbn($isbn_number){
 
@@ -190,6 +204,10 @@
                         if(count($others)<1){
                             $result['desc']="Lütfen daha sonra tekrar deneyiniz. 1";
                         }else{
+                            $imageHTML=getHTMLByID("image-area", $check_one);
+                            preg_match('/<img(.*)src(.*)=(.*)"(.*)"/U', $imageHTML, $imageHTML);
+                            $image = array_pop($imageHTML);
+                            $image = checkImage($isbn, $image);
                             $result['status']=true;
                             $result['desc']="Veriler yüklendi, dikkat verilerin doğruluğunu asla kabul etmiyoruz. - from api";
                             // parse start
@@ -197,7 +215,8 @@
                                 "title"=>clearText(getHTMLByID("autherText text-center cursorPointer", $check_two)),
                                 "author"=>$others['author'],
                                 "publisher"=>$others['publisher'],
-                                "isbn"=>(int)$others['isbn']
+                                "isbn"=>(int)$others['isbn'],
+                                "image"=>$image
                             );
                             isbnSave($result['result']);
                         }
