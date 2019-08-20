@@ -27,8 +27,16 @@
                 unset($text[$key]);
             }
         }
-        foreach($text  as $item){
-            $result[]=$item;
+        foreach($text as $key=>$item){
+            if(is_numeric($item)){
+                $result['isbn']=$item;
+            }else{
+                if($key===0){
+                    $result['author']=$item;
+                }elseif($key===1){
+                    $result['publisher']=$item;
+                }
+            }
         }
         return $result;
     }
@@ -129,17 +137,17 @@
                     $check_two = getHTMLByID("bookDiv", $replaced_result);
                     if($check_two){
                         $others = clearText2(getHTMLByID("hover-image-area", $check_two));
-                        if(count($others)<1 || @(int)$others[2]===0){
-                            $result['desc']="Lütfen daha sonra tekrar deneyiniz.";
+                        if(count($others)<1){
+                            $result['desc']="Lütfen daha sonra tekrar deneyiniz. 1";
                         }else{
                             $result['status']=true;
                             $result['desc']="Veriler yüklendi, dikkat verilerin doğruluğunu asla kabul etmiyoruz. - from api";
                             // parse start
                             $result['result']=array(
                                 "title"=>clearText(getHTMLByID("autherText text-center cursorPointer", $check_two)),
-                                "author"=>$others[0],
-                                "publisher"=>$others[1],
-                                "isbn"=>(int)$others[2]
+                                "author"=>$others['author'],
+                                "publisher"=>$others['publisher'],
+                                "isbn"=>(int)$others['isbn']
                             );
                             isbnSave($result['result']);
                         }
@@ -148,7 +156,7 @@
                         $result['desc']="Sonuç bulanamadı. Doğru bir ISBN numarası girdiğinden emin olunuz veya kayıtlarımızda bulunamadı.";
                     }    
                 }else{
-                    $result['desc']="Lütfen daha sonra tekrar deneyiniz.";
+                    $result['desc']="Lütfen daha sonra tekrar deneyiniz. 2";
                 }
     
             }
