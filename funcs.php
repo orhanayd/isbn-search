@@ -1,6 +1,11 @@
 <?php
     include("env.php");
 
+    $local=false;
+    if($_SERVER['REMOTE_ADDR']!=="127.0.0.1"){
+        $local=true;
+    }
+
     function getHTMLByID($id, $html) {
         $dom = new DOMDocument;
         libxml_use_internal_errors(true);
@@ -31,9 +36,9 @@
             if(is_numeric($item)){
                 $result['isbn']=$item;
             }else{
-                if($key===0){
+                if($key===4){
                     $result['author']=$item;
-                }elseif($key===1){
+                }elseif($key===5){
                     $result['publisher']=$item;
                 }
             }
@@ -53,6 +58,10 @@
     }
 
     function isbnSave($data){
+        global $local;
+        if($local){
+            return true;
+        }
         $manager = new MongoDB\Driver\Manager($_ENV["mongo_conn"]);
         $bulk = new MongoDB\Driver\BulkWrite;
         $data['time']=time();
