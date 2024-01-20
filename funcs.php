@@ -10,11 +10,18 @@
 
     function checkImage($isbn, $url){
         global $preLink;
+        $opts = array(
+            "ssl"=>array(
+                "allow_self_signed"=>true,
+                "verify_peer"=>false,
+                "verify_peer_name"=>false
+            )
+        );
         $imagePath="images/".$isbn.".jpg";
         if(file_exists($imagePath)){
             return $preLink.$imagePath;
         }
-        if(copy($url, $imagePath)){
+        if(copy($url, $imagePath, stream_context_create($opts))){
             return $preLink.$imagePath;
         }
         return null;
@@ -172,6 +179,7 @@
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
             curl_setopt($ch, CURLOPT_ENCODING, 'gzip, deflate');
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             $headers = array();
             $headers[] = 'Connection: keep-alive';
             $headers[] = 'Pragma: no-cache';
